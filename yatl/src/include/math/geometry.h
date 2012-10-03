@@ -108,6 +108,19 @@ struct segment {
 		static const bool result = gt_op< typename seg2::minx, minx >::result && lt_op< typename seg2::maxx, maxx >::result;
 	};
 
+	template <typename seg2>
+	struct partialOverlapOnRight {
+		static const bool result = gt_op< typename seg2::minx, minx>::result && lt_op< typename seg2::minx, maxx>::result &&
+				gt_op< typename seg2::maxx, maxx>::result;
+	};
+
+	template <typename seg2>
+	struct partialOverlapOnLeft {
+		static const bool result = lt_op< typename seg2::minx, minx>::result && gt_op< typename seg2::maxx, minx>::result &&
+				lt_op< typename seg2::maxx, maxx>::result;
+	};
+
+
 
 	template <typename seg2>
 	struct overlapAbove {
@@ -116,16 +129,22 @@ struct segment {
 	};
 
 
+	/**
+	 * subtract the range of seg2 from seg1, resulting in a list of zero up to two segments.
+	 */
 	template <typename seg2>
-	struct subtract {
-		typedef typename mcond<
+	struct subtract : public mcond<
 				!overlaps<seg2>::result,
 					list< list_<this_> >,
 				strictlyCompletelyOverlaps<seg2>::result,
-					list< prefix<typename seg2::minx>, suffix<typename seg2::maxx> >
-		// todo
-				>::type result;
-	};
+					list< prefix<typename seg2::minx>, suffix<typename seg2::maxx> >,
+				seg2::template completelyOverlaps<this_>::result,
+					list< _NIL >,
+				partialOverlapOnRight<seg2>::result,
+					list< prefix<typename seg2::minx> >,
+				partialOverlapOnLeft<seg2>::result,
+					list< suffix<typename seg2::maxx> >
+		>::type {};
 
 	template <typename seg2>
 	struct above {
