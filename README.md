@@ -1,15 +1,13 @@
 YATL
 ====
 
-Yet Another Template Library
+YATL a.k.a. Yet Another Template Library, is a (not yet) comprehensive template library with the following goals in mind:
 
-1. YATL a.k.a. Yet Another Template Library, is a (not yet) comprehensive template library with the following goals in mind:
+1. Provide a data-centric approach to programming. Separate the constant data from the functionality by letting the compiler take care of transforming the data to an efficiently usable form
 
-2. Provide a data-centric approach to programming. Separate the constant data from the functionality by letting the compiler take care of transforming the data to an efficiently usable form
+2. Run-time Performance
 
-3. Run-time Performance
-
-4. Ease of use
+3. Ease of use
 
 
 Some of the features provided by YATL:
