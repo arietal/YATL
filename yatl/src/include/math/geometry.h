@@ -34,10 +34,17 @@ using namespace yatl::List;
 
 namespace yatl {
 
+/**
+ * Represent a point in a 2D space
+ */
 template <typename rx, typename ry>
 struct point {
 	typedef rx x;
 	typedef ry y;
+
+	/**
+	 * lexicographic compare of two points, with the x dimension as the primary one
+	 */
 	template <typename p2>
 	struct compare {
 		static const int c1 = x::template compare<typename p2::x>::result;
@@ -51,12 +58,22 @@ ostream &operator<<(ostream &os, const point<rx,ry>& p) {
 	return os << "(" << rx() << ", " << ry() << ")";
 }
 
+/**
+ * The P class is the one that should be used (instead of using point directly). It also enables adding points
+ * to a list, and converting such list to an array, etc.
+ */
 template <typename r1, typename r2>
 struct P : public point<r1, r2> {
 	typedef point<typename r1::o_type, typename r2::o_type> o_type;
 };
 
-// assume p1::x != p2::x
+/**
+ * A segment is described as the line connecting two points.
+ *
+ * Assume p1::x != p2::x (for the time being)
+ *
+ * For each segment, calculate the "line" function (i.e. a*x + b)
+ */
 template <typename p1_, typename p2_>
 struct segment {
 	typedef segment<p1_, p2_> this_;
@@ -71,55 +88,97 @@ struct segment {
 	typedef typename div_op< sub_op<maxx_y, minx_y>, sub_op<maxx, minx> >::simplify a;
 	typedef typename sub_op< minx_y, mpy_op< a, minx > >::simplify b;
 
+	/**
+	 * Calculate the y value at a given x
+	 */
 	template <typename x>
 	struct at : public add_op< b,
 				   mpy_op< a, x > >::simplify {};
 
+	/**
+	 * The dynamic version of 'at' that evaluates the line function at a given x
+	 */
 	static typename p1::o_type eval(const typename p1::o_type& x) {
 		return a()*x + b();
 	}
 
+	/**
+	 * Test whether a given x is in the x-range of a segment (i.e. between minx and maxx)
+	 */
 	template <typename x>
 	struct x_in_range {
 		static const bool result = ge_op< x, minx >::result && le_op< x, maxx >::result;
 	};
 
+	/**
+	 * Derive a sub-segment from minx to a given x
+	 */
 	template <typename x>
 	struct prefix : public segment< minp, P< x, at<x> > > {};
 
+	/**
+	 * Derive a sub-segment from a given x to maxx
+	 */
 	template <typename x>
 	struct suffix : public segment< P< x, at<x> >, maxp > {};
 
+	/**
+	 * Derive a subsegment from a given x1 to a given x2
+	 */
 	template <typename x1, typename x2>
 	struct subsegment : public segment< P< x1, at<x1> >, P< x2, at<x2> > > {};
 
+	/**
+	 * Test whether the segment overlaps segment seg2.
+	 *
+	 * That is, whether the x-range of this_ segment and the x-range of seg2 overlap.
+	 */
 	template <typename seg2>
 	struct overlaps {
 		static const bool result = le_op< typename seg2::minx, maxx>::result && ge_op< typename seg2::maxx, minx>::result;
 	};
 
+	/**
+	 * Test whether the segment completely overlaps segment seg2.
+	 *
+	 * That is, whether seg2::minx >= minx and seg2::maxx <= maxx
+	 */
 	template <typename seg2>
 	struct completelyOverlaps {
 		static const bool result = ge_op< typename seg2::minx, minx >::result && le_op< typename seg2::maxx, maxx >::result;
 	};
 
+	/**
+	 * Test whether the segment completely overlaps segment seg2.
+	 *
+	 * That is, whether seg2::minx > minx and seg2::maxx < maxx
+	 */
 	template <typename seg2>
 	struct strictlyCompletelyOverlaps {
 		static const bool result = gt_op< typename seg2::minx, minx >::result && lt_op< typename seg2::maxx, maxx >::result;
 	};
 
+	/**
+	 * Test whether seg2 partially overlaps this_ segment on the right side.
+	 *
+	 * That is, whether seg2::minx is strictly within x-range, and seg2::maxx > maxx.
+	 */
 	template <typename seg2>
 	struct partialOverlapOnRight {
 		static const bool result = gt_op< typename seg2::minx, minx>::result && lt_op< typename seg2::minx, maxx>::result &&
 				gt_op< typename seg2::maxx, maxx>::result;
 	};
 
+	/**
+	 * Test whether seg2 partially overlaps this_ segment on the left side.
+	 *
+	 * That is, whether seg2::maxx is strictly within x-range, and seg2::minx < minxx.
+	 */
 	template <typename seg2>
 	struct partialOverlapOnLeft {
 		static const bool result = lt_op< typename seg2::minx, minx>::result && gt_op< typename seg2::maxx, minx>::result &&
 				lt_op< typename seg2::maxx, maxx>::result;
 	};
-
 
 
 	template <typename seg2>
