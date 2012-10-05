@@ -162,7 +162,7 @@ public:
 
         timeval t1, t2;
         const long vmax=200;
-        const long itr=800000;
+        const long itr=4000000;
         gettimeofday(&t1, NULL);
         int sum=0;
         for (int j=0; j < itr; j++)
@@ -183,6 +183,7 @@ public:
 
         cout << "cyc/defuzz: " << CPUSpeed * avgDefuzz / 1.0E9 << endl;
 
+        if (false)
         for (int i=0; i < 200; i++) {
 			cout << "Testing " << i << " ... ";
 			switch(MyDefuzzifier::defuzzify(LongRational(i))) {

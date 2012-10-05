@@ -137,7 +137,6 @@ public:
 				segment< P< LR<3>, LR<3,2> >, P< LR<6>, LR<3> > > > >::result == 0),
 				("Expected s1 - s2 = [(0, 0) - (1/2, 1/4), a: 1/2, b: 0, minx: 0, miny: 0], [(3, 3/2) - (6, 3), a: 1/2, b: 0, minx: 3, miny: 3/2]"));
 		Assume((s5::subtract<s2>::compare< list< s5 > >::result == 0), ("Expected s5 -s2 = s5"));
-//		cout << "ns2 - ns1 = " << ns2::subtract<ns1>() << endl;
 
 		return true;
 	}

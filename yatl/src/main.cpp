@@ -41,17 +41,18 @@ int main(int argc, char* argv[]) {
 
 	TestHarness<TMPTestHarness>().run();
 
-	TestHarness<MathTestHarness>().run();
+	TestHarness<TreeTestHarness>().run();
 
-	//TestHarness<TreeTestHarness>().run();
-
-	//Tester<MapTest>().run();
+	Tester<MapTest>().run();
 
 //	Tester<ConcurrentContainerTest<amino::OrderedList<int> > >().run();
 
 
     
-    //Tester<RuleTest>().run();
+    Tester<RuleTest>().run();
+
+	TestHarness<MathTestHarness>().run();
+
 
 	return 0;
 }
