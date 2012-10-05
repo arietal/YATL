@@ -129,6 +129,16 @@ public:
 			     segment< P< LR<3,4>, LR<5,12> >, P< LR<1>, LR<1,3> > > > >::result == 0),
 				("Expected [(0, 2/3) - (1/2, 1/2), a: -1/3, b: 2/3, minx: 0, miny: 2/3], [(1/2, 2/3) - (3/4, 3/4), a: 1/3, b: 1/2, minx: 1/2, miny: 2/3], [(3/4, 5/12) - (1, 1/3), a: -1/3, b: 2/3, minx: 3/4, miny: 5/12]"));
 
+		Assume((ns1::subtract<ns2>::compare< list< segment< P< LR<0>, LR<0> >, P< LR<1,4>, LR<1,4> > > > >::result == 0),
+				("Expected ns1 - ns2 = [(0, 0) - (1/4, 1/4), a: 1, b: 0, minx: 0, miny: 0] "));
+		Assume((ns2::subtract<ns1>::size == 0), ("Expected ns2 - ns1 = empty list"));
+		Assume((s2::subtract<s1>::size == 0), ("Expected s2 - s1 = empty list"));
+		Assume((s1::subtract<s2>::compare< list< segment< P< LR<0>, LR<0> >, P< LR<1,2>, LR<1,4> > >,
+				segment< P< LR<3>, LR<3,2> >, P< LR<6>, LR<3> > > > >::result == 0),
+				("Expected s1 - s2 = [(0, 0) - (1/2, 1/4), a: 1/2, b: 0, minx: 0, miny: 0], [(3, 3/2) - (6, 3), a: 1/2, b: 0, minx: 3, miny: 3/2]"));
+		Assume((s5::subtract<s2>::compare< list< s5 > >::result == 0), ("Expected s5 -s2 = s5"));
+//		cout << "ns2 - ns1 = " << ns2::subtract<ns1>() << endl;
+
 		return true;
 	}
 };

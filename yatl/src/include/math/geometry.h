@@ -166,7 +166,7 @@ struct segment {
 	template <typename seg2>
 	struct partialOverlapOnRight {
 		static const bool result = gt_op< typename seg2::minx, minx>::result && lt_op< typename seg2::minx, maxx>::result &&
-				gt_op< typename seg2::maxx, maxx>::result;
+				ge_op< typename seg2::maxx, maxx>::result;
 	};
 
 	/**
@@ -176,7 +176,7 @@ struct segment {
 	 */
 	template <typename seg2>
 	struct partialOverlapOnLeft {
-		static const bool result = lt_op< typename seg2::minx, minx>::result && gt_op< typename seg2::maxx, minx>::result &&
+		static const bool result = le_op< typename seg2::minx, minx>::result && gt_op< typename seg2::maxx, minx>::result &&
 				lt_op< typename seg2::maxx, maxx>::result;
 	};
 
@@ -202,7 +202,9 @@ struct segment {
 				partialOverlapOnRight<seg2>::result,
 					list< prefix<typename seg2::minx> >,
 				partialOverlapOnLeft<seg2>::result,
-					list< suffix<typename seg2::maxx> >
+					list< suffix<typename seg2::maxx> >,
+				true,
+					list< LR<-1> >
 		>::type {};
 
 	template <typename seg2>
