@@ -38,11 +38,14 @@ namespace List {
 #define DPX(ty, d,def) ty p##d##0 def, ty p##d##1 def, ty p##d##2 def, ty p##d##3 def, \
 		ty p##d##4 def, ty p##d##5 def, ty p##d##6 def, ty p##d##7 def, ty p##d##8 def, ty p##d##9 def
 
-#define DPARAMS ,DPX(typename, 1, =_NIL), DPX(typename, 2, =_NIL)
+#define DPARAMS ,DPX(typename, 1, =_NIL)
+//, DPX(typename, 2, =_NIL)
 //, DPX(typename, 3, =_NIL), DPX(typename, 4, =_NIL), DPX(typename, 5, =_NIL)
-#define TPARAMS ,DPX(typename, 1, =_NIL), DPX(typename, 2, =_NIL)
+#define TPARAMS ,DPX(typename, 1, =_NIL)
+//, DPX(typename, 2, =_NIL)
 //, DPX(typename, 3, =_NIL), DPX(typename, 4, =_NIL), DPX(typename, 5, =_NIL)
-#define PARAMS ,DPX(,1,), DPX(,2,)
+#define PARAMS ,DPX(,1,)
+//, DPX(,2,)
 //, DPX(,3,), DPX(,4,), DPX(,5,)
 
 #define DEF_PARAM_LIST typename p3=_NIL, typename p4=_NIL, typename p5=_NIL, \
@@ -199,7 +202,64 @@ template <typename p1, typename p2=_NIL, DEF_PARAM_LIST>
 struct list {
 	typedef list_<p1, typename list<PARAM_LIST>::List_> List_;
 
-	__list_methods
+//	__list_methods
+	enum { size = List_::size };
+
+	template<template <typename r> class scanner>
+	static void each() {
+		List::each<List_,scanner>::scan();
+	}
+	template<template <typename r> class scanner, typename p1_>
+	static void each(p1_ &o1) {
+		List::each<List_, scanner>::scan(o1);
+	}
+	template<template <typename r> class scanner, typename p1_>
+	static void each(const p1_ &o1) {
+		List::each<List_, scanner>::scan(o1);
+	}
+
+	static typename List_::Node::o_type *toArray() {
+		typename List_::Node::o_type *a = (typename List_::Node::o_type *)new char[sizeof(typename List_::Node::o_type)*List_::size];
+		List::to_a<List_>::init(a);
+		return a;
+	}
+	struct sort : public list<typename List::sort<List_>::List> {};
+
+	template <template <typename r1, typename r2> class compare>
+	struct sort_ : public list<typename List::sort_<List_, compare>::List> {};
+
+	template <template <typename r1> class mapper>
+	struct collect : public list<typename List::collect<List_, mapper>::List> {};
+
+	template <template <typename r1> class filt>
+	struct filter : public list<typename List::filter<List_, filt>::List> {};
+
+	typedef list<typename List::reverse<List_, _NIL>::List> reverse;
+
+	template <typename l2>
+	struct concat : public list<typename List::concat<List_, typename l2::List_>::List> {};
+
+	template <int idx>
+	struct elementAt : public List::elementAt<List_, idx>::result {};
+
+	template <typename r>
+	struct indexOf : public List::indexOf<List_, r, 0> {};
+
+	template <typename r>
+	struct lastIndexOf : public List::lastIndexOf<List_, r, 0, -1> {};
+
+	template <typename l2>
+	struct equals : public List::equals<List_, typename l2::List_> {};
+
+	template <typename l2>
+	struct compare : public List::compare<List_, typename l2::List_> {};
+
+	template <int startIdx, int endIdx>
+	struct sublist : public list< typename List::sublist<List_, startIdx, endIdx, 0>::List> {};
+
+	static void print(ostream& os=cout) { each<List::print>(os); }
+
+
 
 };
 
@@ -207,7 +267,62 @@ template <typename node, typename next>
 struct list<list_<node,next> > {
 	typedef list_<node,next> List_;
 
-	__list_methods
+//	__list_methods
+	enum { size = List_::size };
+
+	template<template <typename r> class scanner>
+	static void each() {
+		List::each<List_,scanner>::scan();
+	}
+	template<template <typename r> class scanner, typename p1_>
+	static void each(p1_ &o1) {
+		List::each<List_, scanner>::scan(o1);
+	}
+	template<template <typename r> class scanner, typename p1_>
+	static void each(const p1_ &o1) {
+		List::each<List_, scanner>::scan(o1);
+	}
+
+	static typename List_::Node::o_type *toArray() {
+		typename List_::Node::o_type *a = (typename List_::Node::o_type *)new char[sizeof(typename List_::Node::o_type)*List_::size];
+		List::to_a<List_>::init(a);
+		return a;
+	}
+	struct sort : public list<typename List::sort<List_>::List> {};
+
+	template <template <typename r1, typename r2> class compare>
+	struct sort_ : public list<typename List::sort_<List_, compare>::List> {};
+
+	template <template <typename r1> class mapper>
+	struct collect : public list<typename List::collect<List_, mapper>::List> {};
+
+	template <template <typename r1> class filt>
+	struct filter : public list<typename List::filter<List_, filt>::List> {};
+
+	typedef list<typename List::reverse<List_, _NIL>::List> reverse;
+
+	template <typename l2>
+	struct concat : public list<typename List::concat<List_, typename l2::List_>::List> {};
+
+	template <int idx>
+	struct elementAt : public List::elementAt<List_, idx>::result {};
+
+	template <typename r>
+	struct indexOf : public List::indexOf<List_, r, 0> {};
+
+	template <typename r>
+	struct lastIndexOf : public List::lastIndexOf<List_, r, 0, -1> {};
+
+	template <typename l2>
+	struct equals : public List::equals<List_, typename l2::List_> {};
+
+	template <typename l2>
+	struct compare : public List::compare<List_, typename l2::List_> {};
+
+	template <int startIdx, int endIdx>
+	struct sublist : public list< typename List::sublist<List_, startIdx, endIdx, 0>::List> {};
+
+	static void print(ostream& os=cout) { each<List::print>(os); }
 
 };
 

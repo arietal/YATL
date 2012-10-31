@@ -203,7 +203,7 @@ struct segment {
 					list< prefix<typename seg2::minx> >,
 				partialOverlapOnLeft<seg2>::result,
 					list< suffix<typename seg2::maxx> >,
-				true,
+				true, // should not reach this point, will likely generate errors
 					list< LR<-1> >
 		>::type {};
 
@@ -266,6 +266,8 @@ struct seg_intersect {
 template <typename seg1, typename seg2>
 struct maxfunc {
 	typedef seg_intersect<seg1,seg2> intr;
+	typedef segment<typename seg1::p1, typename seg1::p2> seg1_;
+	typedef segment<typename seg2::p1, typename seg2::p2> seg2_;
 	typedef typename if_else< (intr::valid), typename intr::x, typename seg1::minx>::type splitPoint;
 //	typedef typename intr::x splitPoint;
 
@@ -311,35 +313,66 @@ struct maxfunc {
 	};
 
 	typedef list<typename mcond<
-			// if seg1 and seg 2 do not overlap, return a list containing both
-			!seg1::template overlaps<seg2>::result,
-				list_<seg1, list_<seg2, _NIL> >,
-			// if seg1 completely overlaps seg2 and is above it, then return seg1 as the result
-			seg1::template overlapAbove<seg2>::result,
-				list_<seg1, _NIL>,
-			// if seg2 completely overlaps seg1 and is above it, then return seg2 as the result
-			seg2::template overlapAbove<seg1>::result,
-				list_<seg2, _NIL>,
-			// if seg1 completely overlaps seg2 and is below seg2, then compose the result from the prefix of seg1 up to the point where seg2 starts, then seg2, and then the
-			// suffix of seg1 from where seg2 ends
-			!intr::valid && seg1::template completelyOverlaps<seg2>::result,
-				list_<typename seg1::template prefix<typename seg2::minx>, list_<seg2, list_<typename seg1::template suffix<typename seg2::maxx>, _NIL > > >,
-			// if seg2 completely overlaps seg1 and is below seg1, then compose the result from the prefix of seg2 up to the point where seg1 starts, then seg1, and then the
-			// suffix of seg2 from where seg1 ends
-			!intr::valid && seg2::template completelyOverlaps<seg1>::result,
-				list_<typename seg2::template prefix<typename seg1::minx>, list_<seg1, list_<typename seg2::template suffix<typename seg1::maxx>, _NIL > > >,
-			// if seg1 and seg2 cross one another
+			// if seg1_ and seg 2 do not overlap, return a list containing both
+			!seg1_::template overlaps<seg2_>::result,
+				list_<seg1_, list_<seg2_, _NIL> >,
+			// if seg1_ completely overlaps seg2_ and is above it, then return seg1_ as the result
+			seg1_::template overlapAbove<seg2_>::result,
+				list_<seg1_, _NIL>,
+			// if seg2_ completely overlaps seg1_ and is above it, then return seg2_ as the result
+			seg2_::template overlapAbove<seg1_>::result,
+				list_<seg2_, _NIL>,
+			// if seg1_ completely overlaps seg2_ and is below seg2_, then compose the result from the prefix of seg1_ up to the point where seg2_ starts, then seg2_, and then the
+			// suffix of seg1_ from where seg2_ ends
+			!intr::valid && seg1_::template completelyOverlaps<seg2_>::result,
+				list_< typename seg1_::template prefix<typename seg2_::minx>, list_<seg2_, list_<typename seg1_::template suffix<typename seg2_::maxx>, _NIL > > >,
+			// if seg2_ completely overlaps seg1_ and is below seg1_, then compose the result from the prefix of seg2_ up to the point where seg1_ starts, then seg1_, and then the
+			// suffix of seg2_ from where seg1_ ends
+			!intr::valid && seg2_::template completelyOverlaps<seg1_>::result,
+				list_<typename seg2_::template prefix<typename seg1_::minx>, list_<seg1_, list_<typename seg2_::template suffix<typename seg1_::maxx>, _NIL > > >,
+			// if seg1_ and seg2_ cross one another
 			!intr::parallel && intr::valid,
-				typename segSplitOverlap<seg1,seg2>::result,
-			// since the segments are assumed to be sorted, assume seg2 on the right of seg1
-			// so if seg1 is above seg2, return seg1 and the suffix of seg2 from where seg1 ends
-			seg1::template above<seg2>::result,
-				list_<seg1, list_<typename seg2::template suffix<typename seg1::maxx>, _NIL> >,
-			// otherwise seg2 is above seg1, return the prefix of seg1 up to where seg2 starts, and seg 2
+				typename segSplitOverlap<seg1_,seg2_>::result,
+			// since the segments are assumed to be sorted, assume seg2_ on the right of seg1_
+			// so if seg1_ is above seg2_, return seg1_ and the suffix of seg2_ from where seg1_ ends
+			seg1_::template above<seg2_>::result,
+				list_<seg1_, list_<typename seg2_::template suffix<typename seg1_::maxx>, _NIL> >,
+			// otherwise seg2_ is above seg1_, return the prefix of seg1_ up to where seg2_ starts, and seg 2
 			true,
-				list_< typename seg1::template prefix<typename seg2::minx>, list_<seg2, _NIL> >
+				list_< typename seg1_::template prefix<typename seg2_::minx>, list_<seg2_, _NIL> >
 			>::type > result;
 };
+
+
+template <typename segments>
+struct rec_maxfunc {
+	typedef typename rec_maxfunc< list< typename segments::List_ > >::result result;
+};
+
+template <typename seg1, typename seg2, typename next>
+struct rec_maxfunc< list< list_<seg1, list_<seg2, next > > > > {
+	typedef typename maxfunc<seg1, seg2>::result::List_::Node mxfNode;
+	typedef typename maxfunc<seg1, seg2>::result::List_::Next mxfNext;
+	typedef list< typename list< mxfNext >::template concat< list< next > >::List_ > nextSegments;
+	typedef list< list_< mxfNode, typename rec_maxfunc< nextSegments >::result::List_ > > result;
+};
+
+template <typename seg1, typename seg2>
+struct rec_maxfunc< list<seg1, seg2> > {
+	typedef list<typename maxfunc<seg1, seg2>::result::List_> result;
+};
+
+template <typename seg1, typename seg2>
+struct rec_maxfunc< list<list_<seg1, list_<seg2 > > > > {
+	typedef list<typename maxfunc<seg1, seg2>::result::List_> result;
+};
+
+
+template <typename segment>
+struct rec_maxfunc<list<list_<segment> >  > {
+	typedef list<list_<segment> > result;
+};
+
 
 template <typename l, bool sorted=false>
 struct multi_segment {

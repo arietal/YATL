@@ -138,6 +138,30 @@ public:
 				("Expected s1 - s2 = [(0, 0) - (1/2, 1/4), a: 1/2, b: 0, minx: 0, miny: 0], [(3, 3/2) - (6, 3), a: 1/2, b: 0, minx: 3, miny: 3/2]"));
 		Assume((s5::subtract<s2>::compare< list< s5 > >::result == 0), ("Expected s5 -s2 = s5"));
 
+
+
+		rec_maxfunc< list< segment< P< LR<0>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+					     segment< P< LR<1,2>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::print(cout);
+
+		rec_maxfunc< list<
+		                 segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+					     segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::print(cout);
+
+		rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> > >,
+		                 segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+					     segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::print(cout);
+
+		rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<1>, LR<1> > >,
+						   segment< P< LR<1,2>, LR<0> >, P< LR<3,2>, LR<1> > >,
+						   segment< P< LR<1>, LR<1> >, P< LR<2>, LR<0> > >,
+						   segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> > > > >::result::print(cout);
+
+		rec_maxfunc< mseg2::segments::sort >::result::print(cout);
+
+		rec_maxfunc< comb<1,5>::segments::sort >::result::print(cout);
+
+		maxfunc< s3, s2::suffix<s3::minx> >::result::print(cout);
+
 		return true;
 	}
 };
