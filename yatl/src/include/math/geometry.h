@@ -239,9 +239,11 @@ struct segment {
 };
 
 template <typename p1, typename p2>
-ostream &operator <<(ostream& os, const segment<p1,p2>& s) {
-	return os << "[" << p1() << " - " << p2() << ", a: " << typename segment<p1,p2>::a() << ", b: " << typename segment<p1,p2>::b() << ", minx: "
-			<< typename segment<p1,p2>::minx() << ", miny: " << typename segment<p1,p2>::minx_y() << "]";
+ostream &operator <<(ostream& os, const segment<p1,p2>&) {
+//	return os << "[" << p1() << " - " << p2() << ", a: " << typename segment<p1,p2>::a() << ", b: " << typename segment<p1,p2>::b() << ", minx: "
+//			<< typename segment<p1,p2>::minx() << ", miny: " << typename segment<p1,p2>::minx_y() << "]";
+	return os << "segment< P< LR< " << p1::x::nominator << "," << p1::x::denominator << ">, LR<" << p1::y::nominator << "," << p1::y::denominator << "> >, " <<
+			"P< LR< " << p2::x::nominator << "," << p2::x::denominator << ">, LR<" << p2::y::nominator << "," << p2::y::denominator << "> > >";
 }
 
 

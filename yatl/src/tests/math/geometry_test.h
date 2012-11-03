@@ -140,27 +140,65 @@ public:
 
 
 
-		rec_maxfunc< list< segment< P< LR<0>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
-					     segment< P< LR<1,2>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::print(cout);
-
-		rec_maxfunc< list<
+		Assume((rec_maxfunc< list< segment< P< LR<0>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+					     segment< P< LR<1,2>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::compare<
+					     list< segment< P< LR<0>, LR<2,3> >, P< LR<1,2>, LR<4,9> > >,
+					           segment< P< LR<1,2>, LR<2,3> >, P< LR<1>, LR<3,4> > > >
+					     >::result == 0),
+					     ("[(0, 2/3) - (1/2, 4/9), a: -4/9, b: 2/3, minx: 0, miny: 2/3], [(1/2, 2/3) - (1, 3/4), a: 1/6, b: 7/12, minx: 1/2, miny: 2/3]"));
+		Assume((rec_maxfunc< list<
 		                 segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
-					     segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::print(cout);
-
-		rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> > >,
+					     segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::compare<
+					     list< segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+					           segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > >
+					     >::result == 0),
+						 ("[(1/2, 2/3) - (3/4, 1/3), a: -4/3, b: 4/3, minx: 1/2, miny: 2/3], [(3/4, 2/3) - (1, 3/4), a: 1/3, b: 5/12, minx: 3/4, miny: 2/3]"));
+		Assume((rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> > >,
 		                 segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
-					     segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::print(cout);
+					     segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result::compare<
+					     list< segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> > >,
+					     	   segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+					     	   segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > >
+					     >::result == 0),
+						("[(0, 0) - (2/5, 1), a: 5/2, b: 0, minx: 0, miny: 0], [(1/2, 2/3) - (3/4, 1/3), a: -4/3, b: 4/3, minx: 1/2, miny: 2/3], [(3/4, 2/3) - (1, 3/4), a: 1/3, b: 5/12, minx: 3/4, miny: 2/3]"));
 
-		rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<1>, LR<1> > >,
+		Assume((rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<1>, LR<1> > >,
 						   segment< P< LR<1,2>, LR<0> >, P< LR<3,2>, LR<1> > >,
 						   segment< P< LR<1>, LR<1> >, P< LR<2>, LR<0> > >,
-						   segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> > > > >::result::print(cout);
+						   segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> > > > >::result::compare<
+						   list< segment< P< LR< 0,1>, LR<0,1> >, P< LR< 1,1>, LR<1,1> > > ,
+						         segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >,
+						         segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >,
+						         segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > > >
+					  	   >::result == 0),
+						 ("[(0, 0) - (1, 1), a: 1, b: 0, minx: 0, miny: 0], [(1, 1) - (5/4, 3/4), a: -1, b: 2, minx: 1, miny: 1], [(5/4, 3/4) - (3/2, 1), a: 1, b: -1/2, minx: 5/4, miny: 3/4], [(3/2, 1) - (5/2, 0), a: -1, b: 5/2, minx: 3/2, miny: 1]"));
 
-		rec_maxfunc< mseg2::segments::sort >::result::print(cout);
+		Assume((rec_maxfunc< mseg2::segments::sort >::result::compare<
+				list< segment< P< LR< 0,1>, LR<0,1> >, P< LR< 1,1>, LR<1,1> > >,
+				      segment< P< LR< 1,1>, LR<1,1> >, P< LR< 3,2>, LR<1,2> > >,
+				      segment< P< LR< 3,2>, LR<1,2> >, P< LR< 2,1>, LR<1,1> > >,
+				      segment< P< LR< 2,1>, LR<1,1> >, P< LR< 3,1>, LR<0,1> > > >
+				>::result == 0),
+		("[(0, 0) - (1, 1), a: 1, b: 0, minx: 0, miny: 0], [(1, 1) - (3/2, 1/2), a: -1, b: 2, minx: 1, miny: 1], [(3/2, 1/2) - (2, 1), a: 1, b: -1, minx: 3/2, miny: 1/2], [(2, 1) - (3, 0), a: -1, b: 3, minx: 2, miny: 1]"));
 
-		rec_maxfunc< comb<1,5>::segments::sort >::result::print(cout);
+		Assume((rec_maxfunc< comb<1,5>::segments::sort >::result::compare< list<
+					  segment< P< LR< 0,1>, LR<0,1> >, P< LR< 1,1>, LR<1,1> > >,
+					  segment< P< LR< 1,1>, LR<1,1> >, P< LR< 3,2>, LR<1,2> > >,
+					  segment< P< LR< 3,2>, LR<1,2> >, P< LR< 2,1>, LR<1,1> > >,
+					  segment< P< LR< 2,1>, LR<1,1> >, P< LR< 5,2>, LR<1,2> > >,
+					  segment< P< LR< 5,2>, LR<1,2> >, P< LR< 3,1>, LR<1,1> > >,
+					  segment< P< LR< 3,1>, LR<1,1> >, P< LR< 7,2>, LR<1,2> > >,
+					  segment< P< LR< 7,2>, LR<1,2> >, P< LR< 4,1>, LR<1,1> > >,
+					  segment< P< LR< 4,1>, LR<1,1> >, P< LR< 5,1>, LR<0,1> > >
+				> >::result == 0),
+		("[(0, 0) - (1, 1), a: 1, b: 0, minx: 0, miny: 0], [(1, 1) - (3/2, 1/2), a: -1, b: 2, minx: 1, miny: 1], [(3/2, 1/2) - (2, 1), a: 1, b: -1, minx: 3/2, miny: 1/2], [(2, 1) - (5/2, 1/2), a: -1, b: 3, minx: 2, miny: 1], [(5/2, 1/2) - (3, 1), a: 1, b: -2, minx: 5/2, miny: 1/2], [(3, 1) - (7/2, 1/2), a: -1, b: 4, minx: 3, miny: 1], [(7/2, 1/2) - (4, 1), a: 1, b: -3, minx: 7/2, miny: 1/2], [(4, 1) - (5, 0), a: -1, b: 5, minx: 4, miny: 1]"));
 
-		maxfunc< s3, s2::suffix<s3::minx> >::result::print(cout);
+		Assume((maxfunc< s3, s2::suffix<s3::minx> >::result::compare< list<
+					  segment< P< LR< 0,1>, LR<1,1> >, P< LR< 48,41>, LR<33,41> > >,
+					  segment< P< LR< 48,41>, LR<33,41> >, P< LR< 3,1>, LR<3,1> > >,
+					  segment< P< LR< 3,1>, LR<1,2> >, P< LR< 6,1>, LR<0,1> > >
+				> > ::result == 0),
+		("[(0, 1) - (48/41, 33/41), a: -1/6, b: 1, minx: 0, miny: 1], [(48/41, 33/41) - (3, 3), a: 6/5, b: -3/5, minx: 48/41, miny: 33/41], [(3, 1/2) - (6, 0), a: -1/6, b: 1, minx: 3, miny: 1/2]"));
 
 		return true;
 	}
