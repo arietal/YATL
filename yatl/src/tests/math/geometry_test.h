@@ -217,6 +217,8 @@ public:
 						   segment< P< LR<1>, LR<1> >, P< LR<2>, LR<0> > >,
 						   segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> > > > >::result rmxf2;
 
+		typedef list< segment< P< LR<2>, LR<0> >, P< LR<5,2>, LR<1> > >, segment< P< LR<5,2>, LR<1> >, P< LR<3>, LR<0> > > > f3;
+
 		Assume((rmxf1::compare< list<
 				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 3,4>, LR<1,3> > >, segment< P< LR< 3,4>, LR<2,3> >, P< LR< 1,1>, LR<3,4> > >
 				> >::result == 0),
@@ -244,7 +246,15 @@ public:
 				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> > >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >"));
 
 
+		Assume((multi_segment_maxfunc< list< multi_segment< rmxf1 >, multi_segment< rmxf2 > > >::result::segments::compare< list<
+				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> > >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >
+				> >::result == 0),
+				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> > >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >"));
 
+		Assume((multi_segment_maxfunc< list< multi_segment< rmxf1 >, multi_segment< rmxf2 >, multi_segment< f3 > > >::result::segments::compare< list<
+				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> > >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 13,6>, LR<1,3> > >, segment< P< LR< 13,6>, LR<1,3> >, P< LR< 5,2>, LR<1,1> > >, segment< P< LR< 5,2>, LR<1,1> >, P< LR< 3,1>, LR<0,1> > >
+				> >::result == 0),
+				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> > >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 13,6>, LR<1,3> > >, segment< P< LR< 13,6>, LR<1,3> >, P< LR< 5,2>, LR<1,1> > >, segment< P< LR< 5,2>, LR<1,1> >, P< LR< 3,1>, LR<0,1> > >"));
 
 		return true;
 	}

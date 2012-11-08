@@ -283,7 +283,8 @@ struct maxfunc {
 		typedef typename if_else< (eq_op< typename s1::minx, typename s2::minx >::result),
 					typename if_else< (eq_op< typename s1::maxx, typename s2::maxx >::result),
 						// if both segments start and end at the same x points, we create a list containing the top one
-						typename if_else< ( ge_op<typename s1::minx_y, typename s2::minx_y>::result ),
+						typename if_else< ( ge_op<typename s1::minx_y, typename s2::minx_y>::result &&
+								            ge_op<typename s1::maxx_y, typename s2::maxx_y>::result),
 							list_< s1, _NIL >,
 							list_< s2, _NIL > >::type,
 						// else, both start at the same minx, but one segment is shorter.
@@ -397,7 +398,7 @@ struct multi_segment {
 	template <typename x>
 	struct x_in_range : public if_else<(l::Node::template x_in_range<x>::result), typename l::Node::template x_in_range<x>, typename l::Next::template x_in_range<x> >::type {};
 
-
+    struct o_type {};
 };
 
 
@@ -413,7 +414,32 @@ struct multi_segment< list< list_<seg, _NIL> >, sorted>{
 	struct x_in_range : public seg::template x_in_range<x> {};
 
 	typedef segments maxfunc;
+
+	struct o_type {};
 };
+
+template <typename msegList>
+struct multi_segment_maxfunc {
+	typedef typename multi_segment_maxfunc< list< typename msegList::List_ > >::result result;
+};
+
+template <typename mseg1, typename mseg2, typename tail>
+struct multi_segment_maxfunc< list< list_<mseg1, list_<mseg2, tail> > > > {
+	typedef multi_segment< typename two_way_maxfunc< typename mseg1::segments,
+			typename multi_segment_maxfunc< list< list_< mseg2, tail > > >::result::segments >::result> result;
+
+};
+
+template <typename mseg1, typename mseg2>
+struct multi_segment_maxfunc< list< list_<mseg1, list_<mseg2, _NIL> > > > {
+	typedef multi_segment< typename two_way_maxfunc< typename mseg1::segments, typename mseg2::segments >::result > result;
+};
+
+template <typename mseg>
+struct multi_segment_maxfunc< list< list_<mseg, _NIL> > > {
+	typedef mseg result;
+};
+
 
 template <typename l, bool sorted>
 ostream& operator <<(ostream& os, const multi_segment<l, sorted>& ms) {
