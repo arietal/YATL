@@ -67,6 +67,38 @@ struct P : public point<r1, r2> {
 	typedef point<typename r1::o_type, typename r2::o_type> o_type;
 };
 
+
+struct _EmptySegmentPlugin {
+	template <typename plugin2>
+	struct compare {
+		const static int result = 0;
+	};
+};
+
+ostream& operator<<(ostream& os, const _EmptySegmentPlugin&) {
+	return os;
+}
+
+template <int outputValue>
+struct O {
+	const static int output = outputValue;
+
+	struct o_type {
+		int output;
+		o_type() : output(outputValue) {}
+	};
+
+	template <typename plugin2>
+	struct compare {
+		const static int result = (output > plugin2::output) - (output < plugin2::output);
+	};
+};
+
+template <int outputValue>
+ostream& operator<<(ostream& os, const O<outputValue>&) {
+	return os << ", " << outputValue;
+}
+
 /**
  * A segment is described as the line connecting two points.
  *
@@ -74,11 +106,12 @@ struct P : public point<r1, r2> {
  *
  * For each segment, calculate the "line" function (i.e. a*x + b)
  */
-template <typename p1_, typename p2_>
+template <typename p1_, typename p2_, typename plugin_=_EmptySegmentPlugin>
 struct segment {
-	typedef segment<p1_, p2_> this_;
+	typedef segment<p1_, p2_, plugin_> this_;
 	typedef p1_ p1;
 	typedef p2_ p2;
+	typedef plugin_ plugin;
 	typedef min_op<typename p1::x, typename p2::x> minx;
 	typedef max_op<typename p1::x, typename p2::x> maxx;
 	typedef typename if_else< lt_op<typename p1::x, typename p2::x>::result, typename p1::y, typename p2::y>::type minx_y;
@@ -114,19 +147,19 @@ struct segment {
 	 * Derive a sub-segment from minx to a given x
 	 */
 	template <typename x>
-	struct prefix : public segment< minp, P< x, at<x> > > {};
+	struct prefix : public segment< minp, P< x, at<x> >, plugin > {};
 
 	/**
 	 * Derive a sub-segment from a given x to maxx
 	 */
 	template <typename x>
-	struct suffix : public segment< P< x, at<x> >, maxp > {};
+	struct suffix : public segment< P< x, at<x> >, maxp, plugin > {};
 
 	/**
 	 * Derive a subsegment from a given x1 to a given x2
 	 */
 	template <typename x1, typename x2>
-	struct subsegment : public segment< P< x1, at<x1> >, P< x2, at<x2> > > {};
+	struct subsegment : public segment< P< x1, at<x1> >, P< x2, at<x2> >, plugin > {};
 
 	/**
 	 * Test whether the segment overlaps segment seg2.
@@ -218,8 +251,12 @@ struct segment {
 
 	template <typename seg2>
 	struct compare : public if_else<(p1::template compare<typename seg2::p1>::result != 0),
-												typename p1::template compare<typename seg2::p1>,
-												typename p2::template compare<typename seg2::p2> >::type {};
+										typename if_else<(p1::template compare<typename seg2::p1>::result != 0),
+											typename p1::template compare<typename seg2::p1>,
+											typename plugin::template compare<typename seg2::plugin> >::type,
+										typename if_else<(p2::template compare<typename seg2::p2>::result != 0),
+											typename p2::template compare<typename seg2::p2>,
+											typename plugin::template compare<typename seg2::plugin> >::type>::type {};
 
 	struct width : public sub_op< maxx, minx > {};
 
@@ -238,13 +275,20 @@ struct segment {
 	};
 };
 
-template <typename p1, typename p2>
-ostream &operator <<(ostream& os, const segment<p1,p2>&) {
-//	return os << "[" << p1() << " - " << p2() << ", a: " << typename segment<p1,p2>::a() << ", b: " << typename segment<p1,p2>::b() << ", minx: "
-//			<< typename segment<p1,p2>::minx() << ", miny: " << typename segment<p1,p2>::minx_y() << "]";
-	return os << "segment< P< LR< " << p1::x::nominator << "," << p1::x::denominator << ">, LR<" << p1::y::nominator << "," << p1::y::denominator << "> >, " <<
-			"P< LR< " << p2::x::nominator << "," << p2::x::denominator << ">, LR<" << p2::y::nominator << "," << p2::y::denominator << "> > >";
+template <typename p1, typename p2, typename plugin>
+ostream &operator <<(ostream& os, const segment<p1,p2, plugin>&) {
+	return os << "[" << p1() << " - " << p2() << ", a: " << typename segment<p1,p2>::a() << ", b: " << typename segment<p1,p2>::b() << ", minx: "
+			<< typename segment<p1,p2>::minx() << ", miny: " << typename segment<p1,p2>::minx_y() << plugin() << "]";
+//	return os << "segment< P< LR< " << p1::x::nominator << "," << p1::x::denominator << ">, LR<" << p1::y::nominator << "," << p1::y::denominator << "> >, " <<
+//			"P< LR< " << p2::x::nominator << "," << p2::x::denominator << ">, LR<" << p2::y::nominator << "," << p2::y::denominator << "> > >";
 }
+
+template <typename p1, typename p2, int outputValue>
+ostream &operator <<(ostream& os, const segment<p1,p2, O<outputValue> >&) {
+	return os << "segment< P< LR< " << p1::x::nominator << "," << p1::x::denominator << ">, LR<" << p1::y::nominator << "," << p1::y::denominator << "> >, " <<
+			"P< LR< " << p2::x::nominator << "," << p2::x::denominator << ">, LR<" << p2::y::nominator << "," << p2::y::denominator << "> >, O<" << outputValue << "> >";
+}
+
 
 
 template <typename seg1, typename seg2, typename x>
@@ -268,8 +312,8 @@ struct seg_intersect {
 template <typename seg1, typename seg2>
 struct maxfunc {
 	typedef seg_intersect<seg1,seg2> intr;
-	typedef segment<typename seg1::p1, typename seg1::p2> seg1_;
-	typedef segment<typename seg2::p1, typename seg2::p2> seg2_;
+	typedef segment<typename seg1::p1, typename seg1::p2, typename seg1::plugin> seg1_;
+	typedef segment<typename seg2::p1, typename seg2::p2, typename seg2::plugin> seg2_;
 	typedef typename if_else< (intr::valid), typename intr::x, typename seg1::minx>::type splitPoint;
 //	typedef typename intr::x splitPoint;
 
