@@ -200,6 +200,52 @@ public:
 				> > ::result == 0),
 		("[(0, 1) - (48/41, 33/41), a: -1/6, b: 1, minx: 0, miny: 1], [(48/41, 33/41) - (3, 3), a: 6/5, b: -3/5, minx: 48/41, miny: 33/41], [(3, 1/2) - (6, 0), a: -1/6, b: 1, minx: 3, miny: 1/2]"));
 
+		// a maxfunc of a case where a singularity filter would need to remove a singularity
+		Assume((maxfunc< segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >,
+		segment< P< LR< 0,1>, LR<0,1> >, P< LR< 1,1>, LR<1,1> > > >::result::compare< list<
+			segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,1>, LR<1,1> > >
+			 > > ::result == 0),
+		("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,1>, LR<1,1> > >"));
+
+
+		typedef rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> > >,
+		                 segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+					     segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > > >::result rmxf1;
+
+		typedef rec_maxfunc< list< segment< P< LR<0>, LR<0> >, P< LR<1>, LR<1> > >,
+						   segment< P< LR<1,2>, LR<0> >, P< LR<3,2>, LR<1> > >,
+						   segment< P< LR<1>, LR<1> >, P< LR<2>, LR<0> > >,
+						   segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> > > > >::result rmxf2;
+
+		Assume((rmxf1::compare< list<
+				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 3,4>, LR<1,3> > >, segment< P< LR< 3,4>, LR<2,3> >, P< LR< 1,1>, LR<3,4> > >
+				> >::result == 0),
+				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 3,4>, LR<1,3> > >, segment< P< LR< 3,4>, LR<2,3> >, P< LR< 1,1>, LR<3,4> > >"));
+		Assume((rmxf2::compare< list<
+				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >
+				> >::result == 0),
+				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >"));
+//		typedef rmxf1::concat< rmxf2 >::sort srt;
+//		srt::print(cout);
+//		typedef list< segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >,
+//				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 1,1>, LR<1,1> > >//,
+//				segment< P< LR< 1,2>, LR<2,3> >, P< LR< 3,4>, LR<1,3> > >,
+//				segment< P< LR< 3,4>, LR<2,3> >, P< LR< 1,1>, LR<3,4> > >,
+//				segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >,
+//				segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >,
+				//segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >
+//		> srt_;
+
+//		typedef rec_maxfunc< srt_ >::result rmxf;
+//		rmxf::print(cout);
+		Assume((two_way_maxfunc< rmxf1, rmxf2 >::result::compare< list<
+				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> > >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >
+				> >::result == 0),
+				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> > >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> > >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> > >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> > >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> > >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> > >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 5,2>, LR<0,1> > >"));
+
+
+
+
 		return true;
 	}
 };

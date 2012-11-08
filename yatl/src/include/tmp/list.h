@@ -216,10 +216,47 @@ struct list<_NIL> {
 
 	enum { size = List_::size };
 
+
+
 	template<template <typename r> class scanner >
 	static void each() {
 		scanner<_NIL>::postScan();
 	}
+
+	typedef list<_NIL> sort;
+
+//	template <template <typename r1, typename r2> class compare>
+//	struct sort_ : public list<_NIL> {};
+//
+//	template <template <typename r1> class mapper>
+//	struct collect : public list<_NIL> {};
+//
+//	template <template <typename r1> class filt>
+//	struct filter : public list<_NIL> {};
+
+	typedef list<_NIL> reverse;
+
+	template <typename l2>
+	struct concat : public l2 {};
+
+	template <int idx>
+	struct elementAt : public _NIL {};
+
+	template <typename r>
+	struct indexOf : public List::indexOf<List_, r, 0> {};
+
+	template <typename r>
+	struct lastIndexOf : public List::lastIndexOf<List_, r, 0, -1> {};
+
+	template <typename l2>
+	struct equals : public List::equals<List_, typename l2::List_> {};
+
+	template <typename l2>
+	struct compare : public List::compare<List_, typename l2::List_> {};
+
+//	template <int startIdx, int endIdx>
+//	struct sublist : public list<_NIL> {};
+
 
 	static void print() { each<List::print>(); }
 };

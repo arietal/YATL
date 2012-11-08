@@ -342,7 +342,14 @@ struct maxfunc {
 			// otherwise seg2_ is above seg1_, return the prefix of seg1_ up to where seg2_ starts, and seg 2
 			true,
 				list_< typename seg1_::template prefix<typename seg2_::minx>, list_<seg2_, _NIL> >
-			>::type > result;
+			>::type > result_;
+	template <typename seg>
+	struct singularityFilter {
+		const static int result = ne_op<typename seg::p1::x, typename seg::p2::x>::result;
+	};
+
+	// the production of result_ may form 'singularities' (i.e. segments where p1::x == p2::x), which need to be removed
+	typedef typename result_::template filter<singularityFilter> result;
 };
 
 
@@ -375,6 +382,10 @@ struct rec_maxfunc<list<list_<segment> >  > {
 	typedef list<list_<segment> > result;
 };
 
+template <typename segments1, typename segments2>
+struct two_way_maxfunc {
+	typedef typename rec_maxfunc< typename list< typename segments1::template concat<segments2>::List_ >::sort >::result result;
+};
 
 template <typename l, bool sorted=false>
 struct multi_segment {
