@@ -28,6 +28,7 @@
 
 #include "composite_types.h"
 #include "../tmp/list.h"
+#include "../tmp/bst.h"
 
 using namespace yatl;
 using namespace yatl::List;
@@ -462,9 +463,31 @@ struct multi_segment< list< list_<seg, _NIL> >, sorted>{
 	struct o_type {};
 };
 
+template <typename r>
+struct mapSegmentRange {
+	typedef mapping< range<typename r::minx, typename r::maxx>, r > result;
+};
+
+
+
+
 template <typename msegList>
 struct multi_segment_maxfunc {
 	typedef typename multi_segment_maxfunc< list< typename msegList::List_ > >::result result;
+	typedef typename result::segments::List_::Node::p1::x::o_type x_type;
+	typedef typename result::segments::List_::Node::p1::y::o_type y_type;
+	typedef typename bst_builder< typename result::segments::template collect<mapSegmentRange> >::result bst;
+
+	struct extractSegEval {
+		typedef x_type arg1Type;
+		typedef y_type returnType;
+		template <typename typeArg>
+		static bool execute(const arg1Type& input, returnType& ret) { ret = typeArg::eval(input); return true; }
+	};
+
+	static bool eval(const x_type& x, y_type& ret) {
+		return bst::template rangeSearchAndExecute<extractSegEval>(x,ret);
+	}
 };
 
 template <typename mseg1, typename mseg2, typename tail>
