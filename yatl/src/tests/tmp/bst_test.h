@@ -52,6 +52,26 @@ struct mapit {
 	typedef mapping< I<r::value>, I<r::template mpy<r>::value> > result;
 };
 
+
+template <typename r>
+struct mapRange {
+	typedef mapping< r, r > result;
+};
+
+
+struct printRange {
+	typedef Integer arg1Type;
+	template <typename typeArg>
+	static bool execute(const arg1Type& input) { cout << "data = " << typeArg(); return true; }
+};
+
+struct extractRange {
+	typedef Integer arg1Type;
+	typedef range< I<0>, I<0> >::o_type returnType;
+	template <typename typeArg>
+	static bool execute(const arg1Type& input, returnType& output) { output.left = typename typeArg::left(); output.right = typename typeArg::right(); return true; }
+};
+
 class BstTest : public Test {
 public:
 	const char *getName() const { return "TMP::BinarySearchTree Test"; }
@@ -106,7 +126,22 @@ public:
 			}
 		}
 
-//		myBst3::print();
+		typedef list< range<I<0>,I<3> >,
+				range<I<3>, I<5> >,
+				range<I<5>, I<10> >,
+				range<I<10>, I<13> > >::sort ranges;
+		typedef bst_builder< ranges::collect<mapRange> >::result myBst4;
+
+		extractRange::returnType rout;
+
+		for (int i=0; i <= 13; i++) {
+			if (myBst4::rangeSearchAndExecute<extractRange>(i, rout)) {
+			  Assume( (i >= rout.left.val_ && i < rout.right.val_ ), ("Wrong range [%d, %d] for %d", rout.left.val_, rout.right.val_, i));
+			} else {
+			  Assume( (i >= 13), ("Got false on a search for i = %d (< 13)", i));
+			}
+		}
+
 		return true;
 	}
 };

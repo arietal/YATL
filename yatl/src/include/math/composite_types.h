@@ -112,7 +112,7 @@ struct RationalVarType {
 	static int compareConst(const RationalVarType &a) {
 		int n1 = a.nominator * r::denominator;
 		int n2 = a.denominator * r::nominator;
-		return (n1 > n2) - (n2 < n1);
+		return (n1 > n2) - (n1 < n2);
 	}
 
 	int sign() const {

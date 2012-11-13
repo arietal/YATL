@@ -28,6 +28,7 @@
 
 #include "../test.h"
 #include "../../include/math/geometry.h"
+#include "../../include/tmp/bst.h"
 
 using namespace yatl;
 
@@ -39,6 +40,20 @@ struct triangle {
 	typedef segment< low, p > s1;
 	typedef segment< p, high > s2;
 };
+
+
+template <typename r>
+struct mapSegmentRange {
+	typedef mapping< range<typename r::minx, typename r::maxx>, r > result;
+};
+
+struct printSegRange {
+	typedef LongRational arg1Type;
+	template <typename typeArg>
+	static bool execute(const arg1Type& input) { cout << input << " -> " << typeArg::eval(input).simplify() << "  from data = " << typeArg() << endl; return true; }
+};
+
+
 
 template <int start, int end>
 struct comb_ : public list<list_< typename triangle< LR< start > >::s1, list_< typename triangle< LR< start > >::s2, typename comb_<start+1,end>::List_> > > {};
@@ -255,7 +270,17 @@ public:
 				segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> >, O<1> >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> >, O<2> >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> >, O<1> >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> >, O<2> >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> >, O<2> >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> >, O<2> >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 13,6>, LR<1,3> >, O<2> >, segment< P< LR< 13,6>, LR<1,3> >, P< LR< 5,2>, LR<1,1> >, O<3> >, segment< P< LR< 5,2>, LR<1,1> >, P< LR< 3,1>, LR<0,1> >, O<3> >
 				> >::result == 0),
 				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> >, O<1> >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> >, O<2> >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> >, O<1> >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> >, O<2> >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> >, O<2> >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> >, O<2> >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 13,6>, LR<1,3> >, O<2> >, segment< P< LR< 13,6>, LR<1,3> >, P< LR< 5,2>, LR<1,1> >, O<3> >, segment< P< LR< 5,2>, LR<1,1> >, P< LR< 3,1>, LR<0,1> >, O<3> >"));
-
+//
+//		typedef multi_segment_maxfunc< list< multi_segment< rmxf1 >, multi_segment< rmxf2 >, multi_segment< f3 > > >::result::segments mxg;
+//
+//		typedef bst_builder< mxg::collect<mapSegmentRange> >::result myMxgBst;
+//
+//
+//		myMxgBst::print();
+//		mxg::print();
+//		for (int i=0; i < 30; i++)
+//			myMxgBst::rangeSearchAndExecute<printSegRange>(LongRational(i,10));
+//
 		return true;
 	}
 };

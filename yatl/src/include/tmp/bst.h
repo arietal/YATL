@@ -76,7 +76,22 @@ struct _nil_node {
 	}
 
 	template <typename functor>
-	static bool searchAndExecute(const typename functor::arg1Type& a1, const typename functor::returnType& ret) {
+	static bool searchAndExecute(const typename functor::arg1Type& a1, typename functor::returnType& ret) {
+		return false;
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1) {
+		return false;
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1, const typename functor::arg2Type& a2) {
+		return false;
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1, typename functor::returnType& ret) {
 		return false;
 	}
 
@@ -85,6 +100,30 @@ struct _nil_node {
 ostream& operator<<(ostream& os, const _nil_node& nil) {
 	return os << "(nil)" << endl;
 }
+
+template <typename x1, typename x2>
+struct range {
+	typedef x1 left;
+	typedef x2 right;
+	struct o_type {
+		typename x1::o_type left;
+		typename x2::o_type right;
+		o_type() : left(x1()), right(x2()) {}
+		o_type(typename x1::o_type left_, typename x2::o_type right_) : left(left_), right(right_) {}
+	};
+	template <typename r2>
+	struct compare {
+		const static int result = (left::template compare<typename r2::left>::result != 0) ?
+									left::template compare<typename r2::left>::result :
+									right::template compare<typename r2::right>::result;
+	};
+};
+
+template <typename x1, typename x2>
+ostream& operator<<(ostream& os, const range<x1,x2>&) {
+	return os << "[" << x1() << ", " << x2() << "]";
+}
+
 
 template <typename kType, typename dType, typename leftNodeType=_nil_node, typename rightNodeType=_nil_node, int depth_=0>
 struct node {
@@ -132,6 +171,39 @@ struct node {
 		return right::template searchAndExecute<functor>(a1,ret);
 	}
 
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1) {
+		int cmp = functor::arg1Type::template compareConst<typename key::left>(a1);
+		if (cmp < 0) {
+			return left::template rangeSearchAndExecute<functor>(a1);
+		}
+		if (functor::arg1Type::template compareConst<typename key::right >(a1) < 0)
+			return functor::template execute<data>(a1);
+		return right::template rangeSearchAndExecute<functor>(a1);
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1, const typename functor::arg2Type& a2) {
+		int cmp = functor::arg1Type::template compareConst<typename key::left>(a1);
+		if (cmp < 0) {
+			return left::template rangeSearchAndExecute<functor>(a1,a2);
+		}
+		if (functor::arg1Type::template compareConst<typename key::right >(a1) < 0)
+			return functor::template execute<data>(a1,a2);
+		return right::template rangeSearchAndExecute<functor>(a1,a2);
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1, typename functor::returnType& ret) {
+		int cmp = functor::arg1Type::template compareConst<typename key::left>(a1);
+		if (cmp < 0) {
+			return left::template rangeSearchAndExecute<functor>(a1,ret);
+		}
+		if (functor::arg1Type::template compareConst<typename key::right >(a1) < 0)
+			return functor::template execute<data>(a1,ret);
+		return right::template rangeSearchAndExecute<functor>(a1,ret);
+	}
+
 
 
 };
@@ -172,6 +244,21 @@ struct bst {
 	template <typename functor>
 	static bool searchAndExecute(const typename functor::arg1Type& a1, typename functor::returnType& ret) {
 		return root::template searchAndExecute<functor>(a1, ret);
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1) {
+		return root::template rangeSearchAndExecute<functor>(a1);
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1, const typename functor::arg2Type& a2) {
+		return root::template rangeSearchAndExecute<functor>(a1, a2);
+	}
+
+	template <typename functor>
+	static bool rangeSearchAndExecute(const typename functor::arg1Type& a1, typename functor::returnType& ret) {
+		return root::template rangeSearchAndExecute<functor>(a1, ret);
 	}
 
 

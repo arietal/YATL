@@ -131,7 +131,7 @@ struct segment {
 	/**
 	 * The dynamic version of 'at' that evaluates the line function at a given x
 	 */
-	static typename p1::o_type eval(const typename p1::o_type& x) {
+	static typename p1::y::o_type eval(const typename p1::x::o_type& x) {
 		return a()*x + b();
 	}
 
