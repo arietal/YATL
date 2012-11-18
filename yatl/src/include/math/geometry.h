@@ -82,10 +82,11 @@ ostream& operator<<(ostream& os, const _EmptySegmentPlugin&) {
 
 template <int outputValue>
 struct O {
-	const static int output = outputValue;
+	typedef int outputType;
+	const static outputType output = outputValue;
 
 	struct o_type {
-		int output;
+		outputType output;
 		o_type() : output(outputValue) {}
 	};
 
@@ -474,21 +475,8 @@ struct mapSegmentRange {
 template <typename msegList>
 struct multi_segment_maxfunc {
 	typedef typename multi_segment_maxfunc< list< typename msegList::List_ > >::result result;
-	typedef typename result::segments::List_::Node::p1::x::o_type x_type;
-	typedef typename result::segments::List_::Node::p1::y::o_type y_type;
-	typedef typename bst_builder< typename result::segments::template collect<mapSegmentRange> >::result bst;
-
-	struct extractSegEval {
-		typedef x_type arg1Type;
-		typedef y_type returnType;
-		template <typename typeArg>
-		static bool execute(const arg1Type& input, returnType& ret) { ret = typeArg::eval(input); return true; }
-	};
-
-	static bool eval(const x_type& x, y_type& ret) {
-		return bst::template rangeSearchAndExecute<extractSegEval>(x,ret);
-	}
 };
+
 
 template <typename mseg1, typename mseg2, typename tail>
 struct multi_segment_maxfunc< list< list_<mseg1, list_<mseg2, tail> > > > {
@@ -513,6 +501,63 @@ ostream& operator <<(ostream& os, const multi_segment<l, sorted>& ms) {
 	multi_segment<l,sorted>::segments::print(os);
 	return os;
 }
+
+template <typename p1, typename p2=_NIL, DEF_PARAM_LIST>
+struct segment_list : public rec_maxfunc< typename list<p1, PARAM_LIST>::sort >::result {
+	typedef typename rec_maxfunc< typename list<p1, PARAM_LIST>::sort >::result segments;
+	struct o_type {};
+};
+
+template <typename p1, typename p2=_NIL, DEF_PARAM_LIST>
+struct multi_segment_list {
+	typedef list<p1, PARAM_LIST> list;
+	typedef typename multi_segment_maxfunc< list >::result maxfunc;
+
+	typedef typename maxfunc::segments::List_::Node::p1::x::o_type x_type;
+	typedef typename maxfunc::segments::List_::Node::p1::y::o_type y_type;
+	typedef typename maxfunc::segments::List_::Node::plugin pluginType;
+	typedef typename pluginType::outputType pluginOutputType;
+	typedef typename bst_builder< typename maxfunc::segments::template collect<mapSegmentRange> >::result bst;
+
+	struct extractSegEval {
+		typedef x_type arg1Type;
+		typedef y_type returnType;
+		template <typename typeArg>
+		static bool execute(const arg1Type& input, returnType& ret) { ret = typeArg::eval(input); return true; }
+	};
+
+	static bool eval(const x_type& x, y_type& ret) {
+		return bst::template rangeSearchAndExecute<extractSegEval>(x,ret);
+	}
+
+	struct extractSegPluginOutput {
+		typedef x_type arg1Type;
+		typedef pluginOutputType returnType;
+		template <typename typeArg>
+		static bool execute(const arg1Type& input, returnType& ret) { ret = typeArg::plugin::output; return true; }
+	};
+
+	static bool getPluginOutput(const x_type& x, pluginOutputType& o) {
+		return bst::template rangeSearchAndExecute<extractSegPluginOutput>(x,o);
+	}
+
+	struct output {
+		y_type eval;
+		pluginOutputType outputValue;
+	};
+
+	struct extractOutput {
+		typedef x_type arg1Type;
+		typedef output returnType;
+		template <typename typeArg>
+		static bool execute(const arg1Type& input, returnType& ret) { ret.eval = typeArg::eval(input); ret.outputValue = typeArg::plugin::output; return true; }
+	};
+
+	static bool getOutput(const x_type& x, output& o) {
+		return bst::template rangeSearchAndExecute<extractOutput>(x,o);
+	}
+
+};
 
 }
 

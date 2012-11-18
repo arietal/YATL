@@ -265,17 +265,23 @@ public:
 				> >::result == 0),
 				("segment< P< LR< 0,1>, LR<0,1> >, P< LR< 2,5>, LR<1,1> >, O<1> >, segment< P< LR< 2,5>, LR<2,5> >, P< LR< 1,2>, LR<1,2> >, O<2> >, segment< P< LR< 1,2>, LR<2,3> >, P< LR< 4,7>, LR<4,7> >, O<1> >, segment< P< LR< 4,7>, LR<4,7> >, P< LR< 1,1>, LR<1,1> >, O<2> >, segment< P< LR< 1,1>, LR<1,1> >, P< LR< 5,4>, LR<3,4> >, O<2> >, segment< P< LR< 5,4>, LR<3,4> >, P< LR< 3,2>, LR<1,1> >, O<2> >, segment< P< LR< 3,2>, LR<1,1> >, P< LR< 13,6>, LR<1,3> >, O<2> >, segment< P< LR< 13,6>, LR<1,3> >, P< LR< 5,2>, LR<1,1> >, O<3> >, segment< P< LR< 5,2>, LR<1,1> >, P< LR< 3,1>, LR<0,1> >, O<3> >"));
 
-		typedef multi_segment_maxfunc< list< multi_segment< rmxf1 >, multi_segment< rmxf2 >, multi_segment< f3 > > > mxg;
 
-//		typedef bst_builder< mxg::collect<mapSegmentRange> >::result myMxgBst;
-//
-//
-//		myMxgBst::print();
-//		mxg::print();
-		LongRational out;
+		typedef multi_segment_list<
+				segment_list< segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> >, O<1> >,
+                		 	  segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> >, O<1> >,
+			                  segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> >, O<1> > >,
+			    segment_list< segment< P< LR<0>, LR<0> >, P< LR<1>, LR<1> >, O<2> >,
+				   	   	   	  segment< P< LR<1,2>, LR<0> >, P< LR<3,2>, LR<1> >, O<2> >,
+				   	   	   	  segment< P< LR<1>, LR<1> >, P< LR<2>, LR<0> >, O<2> >,
+							  segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> >, O<2> > >,
+				segment_list< segment< P< LR<2>, LR<0> >, P< LR<5,2>, LR<1> >, O<3> >,
+				   	   	   	  segment< P< LR<5,2>, LR<1> >, P< LR<3>, LR<0> >, O<3> > >
+		        > mxg;
+
+		mxg::output out;
 		for (int i=0; i < 30; i++) {
-			mxg::eval(LongRational(i,10), out);
-			cout << LongRational(i,10).simplify() << " -> " << out.simplify() << endl;
+			mxg::getOutput(LongRational(i,10), out);
+			cout << LongRational(i,10).simplify() << " -> " << out.eval.simplify() << "     O:" << out.outputValue << endl;
 		}
 
 		return true;
