@@ -282,9 +282,42 @@ public:
 		        > mxg;
 
 		mxg::output out;
+		mxg::output outputVerify[] = {mxg::output( LongRational(0,1), 1),
+				mxg::output( LongRational(1,4), 1),
+				mxg::output( LongRational(1,2), 1),
+				mxg::output( LongRational(3,4), 1),
+				mxg::output( LongRational(2,5), 2),
+				mxg::output( LongRational(2,3), 1),
+				mxg::output( LongRational(3,5), 2),
+				mxg::output( LongRational(7,10), 2),
+				mxg::output( LongRational(4,5), 2),
+				mxg::output( LongRational(9,10), 2),
+				mxg::output( LongRational(1,1), 2),
+				mxg::output( LongRational(9,10), 2),
+				mxg::output( LongRational(4,5), 2),
+				mxg::output( LongRational(4,5), 2),
+				mxg::output( LongRational(9,10), 2),
+				mxg::output( LongRational(1,1), 2),
+				mxg::output( LongRational(9,10), 2),
+				mxg::output( LongRational(4,5), 2),
+				mxg::output( LongRational(7,10), 2),
+				mxg::output( LongRational(3,5), 2),
+				mxg::output( LongRational(1,2), 2),
+				mxg::output( LongRational(2,5), 2),
+				mxg::output( LongRational(2,5), 3),
+				mxg::output( LongRational(3,5), 3),
+				mxg::output( LongRational(4,5), 3),
+				mxg::output( LongRational(1,1), 3),
+				mxg::output( LongRational(4,5), 3),
+				mxg::output( LongRational(3,5), 3),
+				mxg::output( LongRational(2,5), 3),
+				mxg::output( LongRational(1,5), 3),
+				};
+
 		for (int i=0; i < 30; i++) {
 			mxg::getOutput(LongRational(i,10), out);
-			cout << LongRational(i,10).simplify() << " -> " << out.eval.simplify() << "     O:" << out.outputValue << endl;
+			Assume((out.eval == outputVerify[i].eval && out.outputValue == outputVerify[i].outputValue),
+					("Expected for i=%d, eval=%d/%d, outputValue=%d instead of eval=%d/%d, outputValue=%d", i, out.eval.nominator.val_, out.eval.denominator.val_, out.outputValue, outputVerify[i].eval.nominator.val_, outputVerify[i].eval.denominator.val_, outputVerify[i].outputValue))
 		}
 
 		return true;

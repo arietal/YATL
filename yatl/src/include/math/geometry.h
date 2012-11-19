@@ -562,6 +562,8 @@ struct multi_segment_list {
 	struct output {
 		y_type eval;
 		pluginOutputType outputValue;
+		output(y_type eval, pluginOutputType outputValue) : eval(eval), outputValue(outputValue) {}
+		output() {}
 	};
 
 	struct extractOutput {
