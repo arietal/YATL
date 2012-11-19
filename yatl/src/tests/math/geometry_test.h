@@ -267,15 +267,18 @@ public:
 
 
 		typedef multi_segment_list<
-				segment_list< segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> >, O<1> >,
-                		 	  segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> >, O<1> >,
-			                  segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> >, O<1> > >,
-			    segment_list< segment< P< LR<0>, LR<0> >, P< LR<1>, LR<1> >, O<2> >,
-				   	   	   	  segment< P< LR<1,2>, LR<0> >, P< LR<3,2>, LR<1> >, O<2> >,
-				   	   	   	  segment< P< LR<1>, LR<1> >, P< LR<2>, LR<0> >, O<2> >,
-							  segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> >, O<2> > >,
-				segment_list< segment< P< LR<2>, LR<0> >, P< LR<5,2>, LR<1> >, O<3> >,
-				   	   	   	  segment< P< LR<5,2>, LR<1> >, P< LR<3>, LR<0> >, O<3> > >
+				segment_list< O<1>,
+				              segment< P< LR<0>, LR<0> >, P< LR<2,5>, LR<1> > >,
+                		 	  segment< P< LR<1,2>, LR<2,3> >, P< LR<3,4>, LR<1,3> > >,
+			                  segment< P< LR<3,4>, LR<2,3> >, P< LR<1>, LR<3,4> > > >,
+			    segment_list< O<2>,
+			                  segment< P< LR<0>, LR<0> >, P< LR<1>, LR<1> > >,
+				   	   	   	  segment< P< LR<1,2>, LR<0> >, P< LR<3,2>, LR<1> > >,
+				   	   	   	  segment< P< LR<1>, LR<1> >, P< LR<2>, LR<0> > >,
+							  segment< P< LR<3,2>, LR<1> >, P< LR<5,2>, LR<0> > > >,
+				segment_list< O<3>,
+				              segment< P< LR<2>, LR<0> >, P< LR<5,2>, LR<1> > >,
+				   	   	   	  segment< P< LR<5,2>, LR<1> >, P< LR<3>, LR<0> > > >
 		        > mxg;
 
 		mxg::output out;

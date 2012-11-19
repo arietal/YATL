@@ -40,16 +40,16 @@ namespace List {
 
 #define DPARAMS ,DPX(typename, 1, =_NIL), DPX(typename, 2, =_NIL)
 //, DPX(typename, 3, =_NIL), DPX(typename, 4, =_NIL), DPX(typename, 5, =_NIL)
-#define TPARAMS ,DPX(typename, 1, =_NIL), DPX(typename, 2, =_NIL)
-//, DPX(typename, 3, =_NIL), DPX(typename, 4, =_NIL), DPX(typename, 5, =_NIL)
+#define TPARAMS ,DPX(typename, 1,), DPX(typename, 2,)
+//, DPX(typename, 3,), DPX(typename, 4,), DPX(typename, 5,)
 #define PARAMS ,DPX(,1,), DPX(,2,)
 //, DPX(,3,), DPX(,4,), DPX(,5,)
 
 #define DEF_PARAM_LIST typename p3=_NIL, typename p4=_NIL, typename p5=_NIL, \
 		typename p6=_NIL, typename p7=_NIL, typename p8=_NIL, typename p9=_NIL DPARAMS
 
-#define TYPENAME_PARAM_LIST typename p3=_NIL, typename p4=_NIL, typename p5=_NIL, \
-		typename p6=_NIL, typename p7=_NIL, typename p8=_NIL, typename p9=_NIL DPARAMS
+#define TYPENAME_PARAM_LIST typename p3, typename p4, typename p5, \
+		typename p6, typename p7, typename p8, typename p9 TPARAMS
 
 
 #define PARAM_LIST p2,p3,p4,p5,p6,p7,p8,p9 PARAMS

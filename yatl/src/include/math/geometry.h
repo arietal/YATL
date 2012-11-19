@@ -508,6 +508,24 @@ struct segment_list : public rec_maxfunc< typename list<p1, PARAM_LIST>::sort >:
 	struct o_type {};
 };
 
+template <int outputValue, typename l>
+struct embed_plugin {
+	typedef typename l::Node head;
+	typedef typename l::Next tail;
+	typedef list_<segment< typename head::p1, typename head::p2, O<outputValue> >, typename embed_plugin<outputValue, tail>::result> result;
+};
+
+template <int outputValue>
+struct embed_plugin<outputValue, _NIL> {
+	typedef _NIL result;
+};
+
+template <int outputValue, typename p2, TYPENAME_PARAM_LIST>
+struct segment_list< O<outputValue>, PARAM_LIST> : public rec_maxfunc< list< typename embed_plugin<outputValue, typename list<PARAM_LIST>::sort::List_ >::result > >::result {
+	typedef typename rec_maxfunc< list< typename embed_plugin<outputValue, typename list<PARAM_LIST>::sort::List_ >::result > >::result segments;
+	struct o_type {};
+};
+
 template <typename p1, typename p2=_NIL, DEF_PARAM_LIST>
 struct multi_segment_list {
 	typedef list<p1, PARAM_LIST> list;
